@@ -54,11 +54,25 @@ namespace GestaoInsumosAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Insumo>> PostInsumo(Insumo insumo)
         {
-            _context.Insumos.Add(insumo);
-            await _context.SaveChangesAsync();
+            // Gerando um insumo fictício para adicionar no banco de dados
+            var insumoRequest = new Insumo
+            {
+                Nome = insumo.Nome,
+                Quantidade = insumo.Quantidade,
+                Custo = insumo.Custo
+            };
 
-            return CreatedAtAction("GetInsumo", new { id = insumo.Id }, insumo);
+            // Adicionando o insumo no contexto (banco de dados)
+            _context.Insumos.Add(insumoRequest);
+            await _context.SaveChangesAsync(); // O id é gerado aqui pelo banco
+
+            // Atualizando o insumoRequest com o id gerado pelo banco
+            var response = CreatedAtAction("GetInsumo", new { id = insumoRequest.Id }, insumoRequest);
+
+            return response;
         }
+
+
 
         /// <summary>
         /// Atualiza um insumo existente.
