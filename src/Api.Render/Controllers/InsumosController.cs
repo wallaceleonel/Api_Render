@@ -52,8 +52,12 @@ namespace GestaoInsumosAPI.Controllers
         /// <param name="insumo">Dados do insumo a ser criado.</param>
         /// <returns>O insumo criado.</returns>
         [HttpPost]
-        public async Task<ActionResult<Insumo>> PostInsumo(Insumo insumo)
+        public async Task<ActionResult<InsumoRequest>> PostInsumo(InsumoRequest insumo)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             // Gerando um insumo fictício para adicionar no banco de dados
             var insumoRequest = new Insumo
             {
