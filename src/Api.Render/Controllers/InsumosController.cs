@@ -85,24 +85,50 @@ namespace GestaoInsumosAPI.Controllers
         /// <param name="insumo">Dados atualizados do insumo.</param>
         /// <returns>NoContent se a atualização for bem-sucedida.</returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutInsumo(int id, Insumo insumo)
+        public async Task<IActionResult> PutInsumo(int id, InsumoRequest insumo)
         {
-            if (id != insumo.Id)
+            // Validação do 'Nome', 'Quantidade' e 'Custo'
+            if (string.IsNullOrEmpty(insumo.Nome))
             {
-                return BadRequest();
+                return BadRequest(new { message = "O campo 'Nome' é obrigatório." });
             }
 
-            _context.Entry(insumo).State = EntityState.Modified;
+            if (insumo.Quantidade <= 0)
+            {
+                return BadRequest(new { message = "A 'Quantidade' deve ser maior que zero." });
+            }
+
+            if (insumo.Custo <= 0)
+            {
+                return BadRequest(new { message = "O 'Custo' deve ser maior que zero." });
+            }
+
+            // Busca o insumo no banco
+            var insumoExistente = await _context.Insumos.FindAsync(id);
+            if (insumoExistente == null)
+            {
+                return NotFound(new { message = "Insumo não encontrado." });
+            }
+
+            // Atualiza as propriedades do insumo existente com os valores recebidos
+            insumoExistente.Nome = insumo.Nome;
+            insumoExistente.Quantidade = insumo.Quantidade;
+            insumoExistente.Custo = insumo.Custo;
+
+            // Marca a entidade como modificada
+            _context.Entry(insumoExistente).State = EntityState.Modified;
 
             try
             {
+                // Tenta salvar as mudanças
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
+                // Em caso de exceção de concorrência, verifica se o insumo ainda existe
                 if (!InsumoExists(id))
                 {
-                    return NotFound();
+                    return NotFound(new { message = "Insumo não encontrado durante a atualização." });
                 }
                 else
                 {
@@ -110,8 +136,10 @@ namespace GestaoInsumosAPI.Controllers
                 }
             }
 
+            // Retorna sucesso (sem conteúdo)
             return NoContent();
         }
+
 
         /// <summary>
         /// Exclui um insumo pelo ID.
