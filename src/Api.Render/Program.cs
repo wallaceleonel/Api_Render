@@ -18,9 +18,9 @@ builder.Services.AddSwaggerGen(options =>
     // Adicionar informações básicas ao Swagger
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
-        Title = "Gestão de Insumos API",
+        Title = "Gestao de Insumos API",
         Version = "v1",
-        Description = "API para gerenciar insumos em uma Unidade Básica de Saúde",
+        Description = "API para gerenciar insumos em uma Unidade Basica de Saude",
         Contact = new Microsoft.OpenApi.Models.OpenApiContact
         {
             Name = "Grupo 49",
