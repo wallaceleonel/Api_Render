@@ -1,11 +1,11 @@
 version: "3.7"
 
 services:
-  api_exemplo_render:
-    container_name: api_exemplo_render
+  ApiRender:
+    container_name: ApiRender
     build:
       context: .
       dockerfile: Dockerfile
-    image: api_exemplo_render
+    image: ApiRender
     ports:
-      - "8075:8080"
+      - "8080:8080"
